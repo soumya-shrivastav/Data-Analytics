@@ -92,48 +92,6 @@ with st.expander("PREDICTION TABLE"):
     file_name="my_dataframe.csv"
  )
 
-with st.expander("RESIDUAL & LINE OF BEST FIT"):
- # Calculate residuals
- residuals = Y - predictions
- # Create a new DataFrame to store residuals
- residuals_df = pd.DataFrame({'Actual': Y, 'Predicted': predictions, 'Residuals': residuals})
- # Print the residuals DataFrame
- st.dataframe(residuals_df,use_container_width=True)
-
- col1, col2=st.columns(2)
- with col1:
-  plt.scatter(Y, predictions)
-  plt.plot([min(Y), max(Y)], [min(Y), max(Y)], '--k',color='red', label='Best Fit Line')  # Best fit line
-  plt.xlabel('Actual Y | number of Projects')
-  plt.ylabel('Predicted Y')
-  plt.grid(True)
-  plt.legend()
-  st.pyplot()
-
-import seaborn as sns
-with col2:
- sns.displot(residuals,kind='kde',color='blue', fill=True, legend=True)
- sns.set_style("whitegrid")  # Set the style to whitegrid
- st.pyplot()
-
-
-# User input for X1 and X2
-with st.sidebar:
- with st.form("input_form",clear_on_submit=True):
-  x1 = st.number_input("Enter Dependant",)
-  x2 = st.number_input("Number of Wives",)
-  submit_button = st.form_submit_button(label="Predict")
-
-if submit_button:
-  # Make predictions
-  new_data = np.array([[x1, x2]])
-  new_prediction = model.predict(new_data)
-  # Display prediction
-  with st.expander("NEW INCOMMING DATA PREDICTION"):
-   st.write(f"<span style='font-size: 34px;color:green;'>Predicted Output: </span> <span style='font-size: 34px;'> {new_prediction}</span>", unsafe_allow_html=True)
- 
-st.sidebar.image("data/logo1.png",caption="")
-
 
 
 
