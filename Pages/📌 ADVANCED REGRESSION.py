@@ -55,6 +55,99 @@ df=pd.read_csv("advanced_regression.csv")
 
 with st.sidebar:
  st.markdown(f"<h4 class='text-success'>{formatted_day}: {formatted_date}</h4>Analytics Dashboard V: 01/2023<hr>", unsafe_allow_html=True)
+# switcher
+year_= st.sidebar.multiselect(
+    "PICK YEAR:",
+    options=df["year"].unique(),
+    default=df["year"].unique()
+)
+month_ = st.sidebar.multiselect(
+    "PICK MONTH:",
+    options=df["month"].unique(),
+    default=df["month"].unique(),
+)
+
+df_selection = df.query(
+    "month == @month_ & year ==@year_"
+)
+
+#download csv
+with st.sidebar:
+ df_download = df_selection.to_csv(index=False).encode('utf-8')
+ st.download_button(
+    label="Download DataFrame from Mysql",
+    data=df_download,
+    key="download_dataframe.csv",
+    file_name="my_dataframe.csv"
+ )
+
+#drop unnecessary fields
+df_selection.drop(columns=["id","year","month"],axis=1,inplace=True)
+
+#theme_plotly = None # None or streamlit
+
+with st.expander("⬇ EXPLORATORY  ANALYSIS"):
+ st.write("Examining the correlation between the independent variables (features) and the dependent variable before actually building and training a regression model. This is an important step in the initial data exploration and analysis phase to understand the relationships between variables.")
+ col_a,col_b=st.columns(2)
+ with col_a:
+  st.subheader("Interest Vs Unemployment")
+  plt.figure(figsize=(4, 4))
+  sns.regplot(x=df_selection['interest_rate'], y=df_selection['unemployment_rate'],color="#007710")
+  plt.xlabel('Interest Rate')
+  plt.ylabel('Unemployment Rate')
+  plt.title('Interest Rate vs UnemploymentRate: Regression Plot')
+  st.pyplot()
+   
+
+with col_b:
+ plt.figure(figsize=(4, 4))
+ st.subheader("Interest Vs Index Price")
+ sns.regplot(x=df_selection['interest_rate'], y=df_selection['index_price'],color="#007710")
+ plt.xlabel('Interest Rate')
+ plt.ylabel('Unemployment Rate')
+ plt.title('InterestRate vs IndexPrice Regression Plot')
+ st.pyplot()
+
+ fig, ax = plt.subplots()
+ st.subheader("Variables outliers",)
+ sns.boxplot(data=df, orient='h',color="#FF4B4B")
+ plt.show()
+ st.pyplot()
+
+with st.expander("⬇ EXPLORATORY VARIABLE DISTRIBUTIONS BY FREQUENCY: HISTOGRAM"):
+  df_selection.hist(figsize=(16,8),color='#007710', zorder=2, rwidth=0.9,legend = ['unemployment_rate']);
+  st.pyplot()
+
+with st.expander("⬇ EXPLORATORY VARIABLES DISTRIBUTIONS:"):
+ st.subheader("Correlation between variables",)
+ #https://seaborn.pydata.org/generated/seaborn.pairplot.html
+ pairplot = sns.pairplot(df_selection,plot_kws=dict(marker="+", linewidth=1), diag_kws=dict(fill=True))
+ st.pyplot(pairplot)
+
+
+#checking null value
+with st.expander("⬇ NULL VALUES, TENDENCY & VARIABLE DISPERSION"):
+ a1,a2=st.columns(2)
+ a1.write("number of missing (NaN or None) values in each column of a DataFrame")
+ a1.dataframe(df_selection.isnull().sum(),use_container_width=True)
+ a2.write("insights into the central tendency, dispersion, and distribution of the data.")
+ a2.dataframe(df_selection.describe().T,use_container_width=True)
+
+
+
+# train and test split
+with st.expander("⬇ DEFAULT CORRELATION"):
+ st.dataframe(df_selection.corr())
+ st.subheader("Correlation",)
+ st.write("correlation coefficients between Interest Rate Rate & Unemployment Rate")
+ plt.scatter(df_selection['interest_rate'], df_selection['unemployment_rate'])
+ plt.ylabel("Unemployment rate")
+ plt.xlabel("Interest rate")
+ st.pyplot()
+
+
+
+     
  
 
 
