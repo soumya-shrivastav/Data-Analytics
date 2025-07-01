@@ -91,8 +91,7 @@ with st.expander("PREDICTION TABLE"):
     key="download_dataframe.csv",
     file_name="my_dataframe.csv"
  )
-
-with st.expander("RESIDUAL & LINE OF BEST FIT"):
+ with st.expander("RESIDUAL & LINE OF BEST FIT"):
  # Calculate residuals
  residuals = Y - predictions
  # Create a new DataFrame to store residuals
@@ -133,6 +132,8 @@ if submit_button:
    st.write(f"<span style='font-size: 34px;color:green;'>Predicted Output: </span> <span style='font-size: 34px;'> {new_prediction}</span>", unsafe_allow_html=True)
  
 st.sidebar.image("data/logo1.png",caption="")
+
+
 
 
 
