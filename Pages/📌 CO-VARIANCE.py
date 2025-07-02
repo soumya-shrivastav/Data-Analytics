@@ -54,3 +54,25 @@ data = {
     'Prediction': model.predict(X),
     'Residuals':model.resid
 }
+
+
+dt = pd.DataFrame(data) 
+b1.dataframe(dt,use_container_width=True)
+
+with b2:
+ plt.figure(figsize=(8, 6))
+ plt.scatter(df[selected_column], df['Projects'], label='Actual')
+ plt.plot(df[selected_column], model.predict(X), color='red', label='Predicted')
+ plt.xlabel(selected_column)
+ plt.ylabel('Projects')
+ plt.title(f'Line of Best Fit ({selected_column} vs Projects)')
+ plt.title(f'Line of Best Fit ({selected_column} vs Projects)')
+ plt.grid(color='grey', linestyle='--') 
+ plt.legend()
+
+ # Setting outer border color
+ plt.gca().spines['top'].set_color('gray')
+ plt.gca().spines['bottom'].set_color('gray')
+ plt.gca().spines['left'].set_color('gray')
+ plt.gca().spines['right'].set_color('gray')
+ st.pyplot(plt)
