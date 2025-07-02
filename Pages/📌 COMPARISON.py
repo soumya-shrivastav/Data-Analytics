@@ -74,5 +74,44 @@ def plot_age_vs_fields(df):
 
     # Show plot
     st.plotly_chart(fig, use_container_width=True)
+    def main():
+    st.title("Health Data Analysis")
+
+    # Load dataset from CSV
+    df = load_data()
+
+    # Show age distribution by gender with stacked bar
+    st.subheader("age Distribution by Gender")
+    age_gender_dist_fig = go.Figure()
+    gender_dist = df.groupby(['age', 'Gender']).size().reset_index(name='Count')
+    for gender in df['Gender'].unique():
+        gender_data = gender_dist[gender_dist['Gender'] == gender]
+        age_gender_dist_fig.add_trace(go.Bar(
+            x=gender_data['age'],
+            y=gender_data['Count'],
+            name=gender,
+            marker_color='blue' if gender == 'Male' else 'pink'
+        ))
+
+    age_gender_dist_fig.update_layout(
+        barmode='stack',
+        title='age Distribution by Gender',
+        xaxis_title='age',
+        yaxis_title='Count',
+        plot_bgcolor='rgba(0,0,0,0)',  # Set background transparency
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),  # Adjust legend position
+        autosize=True,
+        height=600
+    )
+    st.plotly_chart(age_gender_dist_fig, use_container_width=True)
+
+    # Plot age vs various fields
+    st.subheader("age vs Various Health Metrics")
+    plot_age_vs_fields(df)
+
+if __name__ == "__main__":
+    main()
+    
+    
 
 
