@@ -65,6 +65,18 @@ fig.add_hline(y=mean_unitprice, line_dash="dash", line_color="green", annotation
 # Customize marker and line for bars
 fig.update_traces(marker=dict(color='#51718E', line=dict(color='rgba(33, 150, 243, 1)', width=0.5)), showlegend=True, name='UnitPrice')
 
-
+# Update layout for a materialized look, add gridlines, and adjust legend
+fig.update_layout(
+    title='UNIT PRICE DISTRIBUTION',
+    yaxis_title='UnitPrice',
+    xaxis_title='Frequency',
+    bargap=0.1,
+    legend=dict(title='Data', orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+    xaxis=dict(showgrid=True, gridcolor='rgba(0, 0, 0, 0.1)'),
+    yaxis=dict(showgrid=True, gridcolor='rgba(0, 0, 0, 0.1)')
+)
+# Display the histogram using Streamlit
+st.success("**DISTRIBUTION GRAPH**")
+st.plotly_chart(fig, use_container_width=True)
 
 
