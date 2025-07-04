@@ -38,5 +38,33 @@ relative_frequency=frequency/len(df.UnitPrice)
 
 #cumulative relative frequency
 cumulative_relative_frequency=relative_frequency.cumsum()
+#create summarized table
+summary_table=pd.DataFrame({
+  'Frequency':frequency,
+  'Percentage Frequency':percentage_frequency,
+  'Cumulative Frequency':cumulative_frequency,
+  'Relative Frequency':relative_frequency,
+  'Cumulative Relative Frequency':cumulative_relative_frequency
+
+ }
+)
+showData=st.multiselect("### FILTER",summary_table.columns,default=["Frequency","Percentage Frequency","Cumulative Frequency","Relative Frequency","Cumulative Relative Frequency"]) 
+st.dataframe(summary_table[showData],use_container_width=True)
+
+valid_unitprice_values = df['UnitPrice'].dropna().values
+
+# Add legend and distribution line for mean age
+mean_unitprice = valid_unitprice_values.mean()
+
+# Plotting the histogram using Plotly and Streamlit
+fig = px.histogram(df['UnitPrice'], y=df['UnitPrice'], nbins=10, labels={'UnitPrice': 'UnitPrice', 'count': 'Frequency'}, orientation='h')
+
+# Add a dashed line for mean and customize its appearance
+fig.add_hline(y=mean_unitprice, line_dash="dash", line_color="green", annotation_text=f"Mean UnitPrice: {mean_unitprice:.2f}", annotation_position="bottom right")
+
+# Customize marker and line for bars
+fig.update_traces(marker=dict(color='#51718E', line=dict(color='rgba(33, 150, 243, 1)', width=0.5)), showlegend=True, name='UnitPrice')
+
+
 
 
