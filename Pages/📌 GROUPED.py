@@ -72,5 +72,71 @@ def calculate_grouped_statistics(freq_table):
     standard_error = std_dev / np.sqrt(freq_table['Frequency'].sum())
 
     return mean_grouped, mode, mode_class, median, skewness_grouped, kurtosis_value, IQR, std_dev, standard_error, median_class, variance
+def main():
+    st.title("Grouped Data Statistics")
 
+    # Load dataset from CSV
+    dataset = load_data()
+
+    # Calculate age intervals and frequencies
+    max_age = dataset['age'].max()
+    intervals, labels = calculate_age_intervals(max_age)
+    dataset['age_intervals'] = pd.cut(dataset['age'], bins=intervals, labels=labels, right=False)
+    freq_table = dataset['age_intervals'].value_counts().reset_index()
+    freq_table.columns = ['Age Interval', 'Frequency']
+    freq_table['Age Interval'] = pd.Categorical(freq_table['Age Interval'], categories=labels, ordered=True)
+    freq_table = freq_table.sort_values('Age Interval')
+
+    # Filter out age intervals with zero frequency
+    freq_table = freq_table[freq_table['Frequency'] > 0]
+
+    # Calculate statistics
+    mean_grouped, mode, mode_class, median_grouped, skewness_grouped, kurtosis_value, IQR, std_dev, standard_error, median_class, variance = calculate_grouped_statistics(freq_table)
+
+    st.subheader("Age-Based Health Analysis: Gender, Weight, Height, and Diabetes Distribution")
+    
+    # Print results
+    a1, a2, a3 = st.columns(3) 
+    b1, b2, b3 = st.columns(3)   
+    c1, c2, c3 = st.columns(3) 
+    d1, d2 = st.columns(2)
+    st.subheader("Grouped Data Statistics")
+    a1.metric("Mean (Grouped Data):", f"{mean_grouped:.2f}")
+    a2.metric("Mode (Grouped Data):", f"{mode:.2f}")
+    a3.metric("Mode Class (Grouped Data):", mode_class)
+    b1.metric("Median (Grouped Data):", f"{median_grouped:.2f}")
+    b2.metric("Median Class (Grouped Data):", median_class)
+    b3.metric("Skewness (Grouped Data):", f"{skewness_grouped:.2f}")
+    c1.metric("Kurtosis (Grouped Data):", f"{kurtosis_value:.2f}")
+    c2.metric("Interquartile Range (IQR) (Grouped Data):", f"{IQR:.2f}")
+    c3.metric("Variance (Grouped Data):", f"{variance:.2f}")
+    d1.metric("Standard Deviation (Grouped Data):", f"{std_dev:.2f}")
+    d2.metric("Standard Error (Grouped Data):", f"{standard_error:.2f}")
+    style_metric_cards(border_left_color="#e1ff8b", background_color="#222222")
+
+    # Skewness visualization
+    x = np.linspace(dataset['age'].min(), dataset['age'].max(), 100)
+    p = norm.pdf(x, mean_grouped, std_dev)
+    skew_fig = px.line(x=x, y=p, labels={'x': 'Age', 'y': 'Probability Density'})
+    skew_fig.add_trace(go.Scatter(x=x, y=p, mode='lines', name='Normal Distribution'))
+    skew_fig.update_layout(title="Skewness Visualization", xaxis_title="Age", yaxis_title="Probability Density",
+                           plot_bgcolor='rgba(0,0,0,0)',  # Set background transparency
+                           legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))  # Adjust legend position
+    skew_fig.add_annotation(
+        x=x[0],
+        y=p[0],
+        text=f"Skewness: {skewness_grouped:.2f}",
+        showarrow=False,
+        font=dict(color="red", size=12)
+    )
+    skew_fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='gray')  # Add gridlines on x-axis
+    skew_fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='gray')  # Add gridlines on y-axis
+
+    st.plotly_chart(skew_fig, use_container_width=True)
+
+    # Display frequency table with cumulative frequency
+    st.dataframe(freq_table)
+
+if __name__ == "__main__":
+    main()
 
