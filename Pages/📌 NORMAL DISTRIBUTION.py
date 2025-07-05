@@ -111,5 +111,32 @@ if __name__ == "__main__":
     main()
 
 
+# HTML code for the analog clock
+import base64
+def read_pdf(file_path):
+    with open(file_path, "rb") as file:
+        contents = file.read()
+    return contents
 
+def pdf():
+    file_path = "Z table.pdf"   
+    pdf_contents = read_pdf(file_path)
+    b64 = base64.b64encode(pdf_contents).decode('utf-8')
+    href = f'<a href="data:application/pdf;base64,{b64}" download="downloaded_file.pdf">Download PDF file</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
+
+# Define Z-score values
+z_scores = np.around(np.arange(-3.4, 3.5, 0.1), decimals=2)
+
+# Create a dictionary to store Z-table values
+z_table_values = {z: [round(norm.cdf(z), 4) for z in z_scores] for z in z_scores}
+
+# Create a DataFrame to display Z-table values
+z_table = pd.DataFrame(z_table_values, index=z_scores)
+
+
+with st.expander("VIEW Z TABLE"):
+ pdf()
+ st.dataframe(z_table,use_container_width=True)
 
