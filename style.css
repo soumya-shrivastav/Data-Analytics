@@ -11,19 +11,3 @@
    
 }
 
-div[data-testid="stExpander"] div[role="button"] p
-{
-    font-size: 1.2rem;
-    color:rgb(0, 0, 0);
-    border-color: #000000;
-    color-scheme: #000000;
-}
-
-.sidebar-content {
-    color: white;
-}
-
-[data-testid=stSidebar] {
-    color: white;
-     
-}
